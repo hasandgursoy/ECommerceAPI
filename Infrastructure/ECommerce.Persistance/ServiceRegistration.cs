@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-
+using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Persistance.Repositories;
 
 namespace ECommerceAPI.Persistance
 {
@@ -23,8 +24,17 @@ namespace ECommerceAPI.Persistance
             // Appsettings'e yazdığımız postgresql connectionu kullanmak için microsoft.configuration paketini yüklüyoruz.
             // Daha sonra configuration.json paketini yüklüyoruz.
             // Eğer appsettings ile işimiz çok ise bunu sınıf haline getirip Configurations altında yaptım bunu bu şekilde sürdürebiliriz.
-            
+            // RepositoryDI larını eklerken DbContext'e göre addscoped yada addsingelton olarak eklersek daha hatasız hareket etmiş oluruz.
+
+
             services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configurations.ConnectionString));
+            services.AddScoped<ICustomerReadRepository,CustomerReadRepository>();
+            services.AddScoped<ICustomerWriteRepository,CustomerWriteRepository>();
+            services.AddScoped<IOrderReadRepository,OrderReadRepository>();
+            services.AddScoped<IOrderWriteRepository,OrderWriteRepository>();
+            services.AddScoped<IProductReadRepository,ProductReadRepository>();
+            services.AddScoped<IProductWriteRepository,ProductWriteRepository>();
+            
         }
     }
 }
