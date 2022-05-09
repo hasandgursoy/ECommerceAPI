@@ -24,9 +24,9 @@ namespace ECommerceAPI.API.Controllers
         {
             await _productWriteRepository.AddRangeAsync(new()
             {
-                new() { Id = Guid.NewGuid(), Name ="Product 1",Price =100,CreatedDate=DateTime.UtcNow,Stock=10},
-                new() { Id = Guid.NewGuid(), Name = "Product 2", Price = 200, CreatedDate = DateTime.UtcNow, Stock = 20 },
-                new() { Id = Guid.NewGuid(), Name = "Product 3", Price = 300, CreatedDate = DateTime.UtcNow, Stock = 30 },
+                new() { Id = Guid.NewGuid(), Name ="Product 1",Price =100F,CreatedDate=DateTime.UtcNow,Stock=10},
+                new() { Id = Guid.NewGuid(), Name = "Product 2", Price = 200F, CreatedDate = DateTime.UtcNow, Stock = 20 },
+                new() { Id = Guid.NewGuid(), Name = "Product 3", Price = 300F, CreatedDate = DateTime.UtcNow, Stock = 30 },
 
             });
             var count = await _productWriteRepository.SaveAsync();
