@@ -2,6 +2,7 @@
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -20,25 +21,13 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpGet]
         // Task yazmayı unutursak DbContext dispose olur.
-        public async Task Get()
+        public async Task<IActionResult> Get()
         {
-            await _productWriteRepository.AddRangeAsync(new()
-            {
-                new() { Id = Guid.NewGuid(), Name ="Product 1",Price =100F,CreatedDate=DateTime.UtcNow,Stock=10},
-                new() { Id = Guid.NewGuid(), Name = "Product 2", Price = 200F, CreatedDate = DateTime.UtcNow, Stock = 20 },
-                new() { Id = Guid.NewGuid(), Name = "Product 3", Price = 300F, CreatedDate = DateTime.UtcNow, Stock = 30 },
-
-            });
-            var count = await _productWriteRepository.SaveAsync();
-
+             var result = await _productReadRepository.GetAll().ToListAsync();
+             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
-        {
-           Product product= await _productReadRepository.GetByIdAsync(id);
-            return Ok(product);
-        }
+        
 
     }
 }

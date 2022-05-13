@@ -28,13 +28,17 @@ namespace ECommerceAPI.Persistance.Contexts
             var datas = ChangeTracker.Entries<BaseEntity>();
 
             foreach (var data in datas)
-            {
-                data.State state
+            {   // _ alocation işlemi yapma diyoruz
+                _ = data.State switch
+                {
+                    EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
+                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow
+                };
+
             }
-
             return base.SaveChangesAsync(cancellationToken);
-        }
 
+
+        }
     }
 }
-
