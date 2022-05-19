@@ -32,7 +32,10 @@ namespace ECommerceAPI.Persistance.Contexts
                 _ = data.State switch
                 {
                     EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
-                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow
+                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow,
+                    // Delete EndPoint'in de veri silindiği için DateTime.UtcNow atanamıyor bu da hata veriyor.
+                    // o yüzden bu iki değilse normal hiç kullanmayacağımız bir veri dönelim
+                    _ => DateTime.UtcNow
                 };
 
             }
