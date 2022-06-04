@@ -20,7 +20,7 @@ namespace ECommerceAPI.Persistance.Repositories
             _context = context;
         }
 
-        // T türünde bir yapı dönecek diyoruz.
+        
         public DbSet<T> Table => _context.Set<T>();
         public IQueryable<T> GetAll(bool tracking = true)
         {

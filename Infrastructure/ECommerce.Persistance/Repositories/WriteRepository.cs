@@ -22,9 +22,9 @@ namespace ECommerceAPI.Persistance.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public async Task<bool> AddAsync(T datas)
+        public async Task<bool> AddAsync(T data)
         {
-            EntityEntry<T> entityEntry = await Table.AddAsync(datas);
+            EntityEntry<T> entityEntry = await Table.AddAsync(data);
             return entityEntry.State == EntityState.Added;
         }
 
@@ -54,7 +54,7 @@ namespace ECommerceAPI.Persistance.Repositories
 
         public bool Update(T model)
         {
-            EntityEntry entityEntry = Table.Update(model);
+            EntityEntry<T> entityEntry = Table.Update(model);
             return entityEntry.State == EntityState.Modified;
 
         }
