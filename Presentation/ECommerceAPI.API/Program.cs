@@ -30,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles(); // wwwroot dizinine özel bir middleware
 app.UseCors();
 app.UseHttpsRedirection();
 
