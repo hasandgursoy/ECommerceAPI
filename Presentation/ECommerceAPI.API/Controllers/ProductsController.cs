@@ -1,4 +1,5 @@
 ﻿using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Application.Services;
 using ECommerceAPI.Application.ViewModels.Products;
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -14,13 +15,14 @@ namespace ECommerceAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository,IWebHostEnvironment webHostEnvironment)
+        private readonly IWebHostEnvironment _webHostEnvironment; // burdaki envirionment ortamında ki herşeye hızlıca ulaşmayı sağlayan bir service.
+        private readonly IFileService _fileService;
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             this._webHostEnvironment = webHostEnvironment; // Projemizdeki enviroments'a kadar wwwroot'a kadar (staticfiles'lara) erişmemizi sağlayan servisdir..
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -75,31 +77,10 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost("[action]")]
 
         public async Task<IActionResult> Upload()
-        {   
-            //wwwroot/resource/product-images
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath,"resource/product-images");
-
-            if(!Directory.Exists(uploadPath))
-                    Directory.CreateDirectory(uploadPath);
-
-            // Form Data'dan gelen istekleri yakalamaya yardım ediyor.
-            Random r = new();
-            foreach (IFormFile file in Request.Form.Files)
-            {
-                string v = Path.GetExtension(
-                                    file.FileName);
-                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{v}");
-
-                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None,1024*1024,useAsync:false);
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-                
-            }
-
-            return Ok();
+        {
+            await _fileService.UploadAsync("product-images", Request.Form.Files);
+           return Ok();
         }
-
-
 
     }
 }
