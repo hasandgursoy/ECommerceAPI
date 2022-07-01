@@ -78,8 +78,11 @@ namespace ECommerceAPI.API.Controllers
 
         public async Task<IActionResult> Upload()
         {
-            await _fileService.UploadAsync("product-images", Request.Form.Files);
-           return Ok();
+           //var datas =  await _fileService.UploadAsync("product-images", Request.Form.Files);
+           //return Ok();
+
+
+
         }
 
     }
