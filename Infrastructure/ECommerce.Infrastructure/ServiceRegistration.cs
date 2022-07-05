@@ -1,5 +1,6 @@
-﻿using ECommerceAPI.Application.Services;
+﻿using ECommerceAPI.Application.Abstractions.Storage;
 using ECommerceAPI.Infrastructure.Services;
+using ECommerceAPI.Infrastructure.Services.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,16 @@ namespace ECommerceAPI.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IFileService, FileService>();
+            serviceCollection.AddScoped<IStorageService, StorageService>();
+
+
         }
+        // IStorage'dan türemiş sınıf olmasını şart koşacağız.
+        public static void AddStorage<T>(this IServiceCollection serviceCollection)  where T : class, IStorage
+        {
+            serviceCollection.AddScoped<IStorage, T>();
+        }
+
 
     }
 }
