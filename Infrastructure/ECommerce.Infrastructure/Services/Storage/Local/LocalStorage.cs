@@ -11,7 +11,7 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Local
 {
 
     // Eğer ki ilgili uygulamanın bulundugu sunucuda dosya ekleme işlemi yapacaksak local storage kullanacağız.
-    public class LocalStorage : ILocalStorage
+    public class LocalStorage : Storage,ILocalStorage
     {
 
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -68,8 +68,10 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Local
             foreach (IFormFile file in files)
             {
 
-                await CopyFileAsync($"{uploadPath}\\{file.Name}", file);
-                datas.Add((file.Name, $"{path}\\{file.Name}"));
+                string newName =  await FileRenameAsync(file.Name);
+
+                await CopyFileAsync($"{uploadPath}\\{newName}", file);
+                datas.Add((newName, $"{path}\\{newName}"));
                 
             }
 

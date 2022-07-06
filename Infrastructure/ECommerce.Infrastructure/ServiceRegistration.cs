@@ -18,8 +18,8 @@ namespace ECommerceAPI.Infrastructure
 
 
         }
-        // IStorage'dan türemiş sınıf olmasını şart koşacağız.
-        public static void AddStorage<T>(this IServiceCollection serviceCollection)  where T : class, IStorage
+        // IStorage'dan türemiş sınıf olmasını şart koşacağız. Çünkü azure aws ve local da yazdığımız kodlar tek class ismiyle program cs de değiştiirlmesini hedefliyoruz.
+        public static void AddStorage<T>(this IServiceCollection serviceCollection)  where T : Storage, IStorage
         {
             serviceCollection.AddScoped<IStorage, T>();
         }

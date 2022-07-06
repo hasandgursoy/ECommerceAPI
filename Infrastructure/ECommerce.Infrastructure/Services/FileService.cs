@@ -18,19 +18,6 @@ namespace ECommerceAPI.Infrastructure.Services
         
         // Bu fonksiyon normalde IFileService'de vardı ancak biz onu sadece burada kullanacağımız için 
         // Ve başkalarıyla paylaşma ihtiyacımız olmadığı için kaldırdık.
-        public async Task<string> FileRenameAsync(string path, string fileName )
-        {
-            string newFileName = await Task.Run<string>(async () => {
-                string extension = Path.GetExtension(fileName);
-                string oldName = Path.GetFileNameWithoutExtension(fileName);
-                string newFileName = $"{NameOperation.ChracterRegulatory(fileName)}-{DateTime.Now}{extension}";
-
-                return newFileName;
-
-            });
-
-            return newFileName;
-        }
 
 
     }

@@ -1,6 +1,7 @@
 using ECommerceAPI.Application.Validators.Products;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Infrastructure.Filter;
+using ECommerceAPI.Infrastructure.Services.Storage.Azure;
 using ECommerceAPI.Infrastructure.Services.Storage.Local;
 using ECommerceAPI.Persistance;
 using FluentValidation.AspNetCore;
@@ -13,8 +14,8 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 
 // LocalStorage yerine ne verirsem vereyim çalýþacak evrensel bir yapý kurduk.
-builder.Services.AddStorage<LocalStorage>();
-
+//builder.Services.AddStorage<LocalStorage>();
+builder.Services.AddStorage<AzureStorage>();
 
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
