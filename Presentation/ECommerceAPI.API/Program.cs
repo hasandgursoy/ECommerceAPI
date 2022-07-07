@@ -1,3 +1,4 @@
+using ECommerceAPI.Application.ServiceRegistration;
 using ECommerceAPI.Application.Validators.Products;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Infrastructure.Filter;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddAppLicationServices();
 
 // LocalStorage yerine ne verirsem vereyim çalýþacak evrensel bir yapý kurduk.
 //builder.Services.AddStorage<LocalStorage>();
