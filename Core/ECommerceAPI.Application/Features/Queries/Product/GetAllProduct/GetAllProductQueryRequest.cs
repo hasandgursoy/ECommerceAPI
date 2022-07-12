@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Features.Queries.GetAllProduct
+namespace ECommerceAPI.Application.Features.Queries.Product.GetAllProduct
 {
 
     // Alltaki tanımlamada Request parametresi olarak istenilen şeyi aldık ilk önce.
