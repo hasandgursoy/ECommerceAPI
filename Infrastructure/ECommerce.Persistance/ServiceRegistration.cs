@@ -12,6 +12,7 @@ using ECommerceAPI.Persistance.Repositories;
 using ECommerceAPI.Persistance.Repositories.File;
 using ECommerceAPI.Persistance.Repositories.ProductImageFile;
 using ECommerceAPI.Persistance.Repositories.InvoiceFile;
+using ECommerceAPI.Domain.Entities.Identity;
 
 namespace ECommerceAPI.Persistance
 {
@@ -31,6 +32,15 @@ namespace ECommerceAPI.Persistance
 
 
             services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configurations.ConnectionString));
+            services.AddIdentity<AppUser, AppRole>(options => {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+
+                }
+            ).AddEntityFrameworkStores<ECommerceAPIDbContext>();
             services.AddScoped<ICustomerReadRepository,CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository,CustomerWriteRepository>();
             services.AddScoped<IOrderReadRepository,OrderReadRepository>();
