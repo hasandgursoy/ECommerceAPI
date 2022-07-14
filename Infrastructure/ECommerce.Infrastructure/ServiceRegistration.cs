@@ -1,6 +1,8 @@
 ﻿using ECommerceAPI.Application.Abstractions.Storage;
+using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Infrastructure.Services;
 using ECommerceAPI.Infrastructure.Services.Storage;
+using ECommerceAPI.Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace ECommerceAPI.Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IStorageService, StorageService>();
-
+            serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
 
         }
         // IStorage'dan türemiş sınıf olmasını şart koşacağız. Çünkü azure aws ve local da yazdığımız kodlar tek class ismiyle program cs de değiştiirlmesini hedefliyoruz.

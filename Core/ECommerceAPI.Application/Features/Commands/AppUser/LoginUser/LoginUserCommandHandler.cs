@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Application.Excepitons;
+﻿using ECommerceAPI.Application.Abstractions.Token;
+using ECommerceAPI.Application.DTOs;
+using ECommerceAPI.Application.Excepitons;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -14,12 +16,17 @@ namespace ECommerceAPI.Application.Features.Commands.AppUser.LoginUser
         // SignInManager kullanıcının giriş yapabilmesi yardım eden service.
         readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
         readonly SignInManager<Domain.Entities.Identity.AppUser> _signInManager;
+        readonly ITokenHandler _tokenHandler;
+
+
 
         public LoginUserCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager,
-            SignInManager<Domain.Entities.Identity.AppUser> signInManager)
+            SignInManager<Domain.Entities.Identity.AppUser> signInManager,
+            ITokenHandler tokenHandler)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenHandler = tokenHandler;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
@@ -42,14 +49,19 @@ namespace ECommerceAPI.Application.Features.Commands.AppUser.LoginUser
 
             // Artık Giriş Başarılıysa Yetkilendirme(Authorization) işlemine geçelim.
             if (result.Succeeded) // Authentication başarılı :D 
-            {   
-                
-                
-                    //..... Yetkileri belirliyoruz.
+            {
+                Token token = _tokenHandler.CreateAccessToken(5);
+
+                return new LoginUserSuccessCommandResponse()
+                {
+                    Token = token,
+                };
                
             }
 
-            return null;
+            throw new AuthenticationErrorExcepiton();
+
+            
            
         }
     }
