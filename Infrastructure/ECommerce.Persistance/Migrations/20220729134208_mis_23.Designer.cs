@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommerceAPI.Persistance.Migrations
 {
     [DbContext(typeof(ECommerceAPIDbContext))]
-    [Migration("20220713065510_identity-0")]
-    partial class identity0
+    [Migration("20220729134208_mis_23")]
+    partial class mis_23
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -13,6 +13,8 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Local
     // Eğer ki ilgili uygulamanın bulundugu sunucuda dosya ekleme işlemi yapacaksak local storage kullanacağız.
     public class LocalStorage : Storage,ILocalStorage
     {
+        // Burda bir hata ile karşılaştık bunu bulmak da çok kolay olmadı benim için
+        // Yapmamız gereken Framework olarak Microsoft.AspNetCore.Hosting yapısını eklemek.
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 

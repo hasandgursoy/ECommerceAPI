@@ -10,3 +10,5 @@ namespace ECommerceAPI.Application.Features.Commands.Product.CreateProduct
     {
     }
 }
+
+
