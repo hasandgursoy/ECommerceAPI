@@ -18,6 +18,7 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddAppLicationServices();
 
+
 // LocalStorage yerine ne verirsem vereyim çalýþacak evrensel bir yapý kurduk.
 //builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddStorage<AzureStorage>();
