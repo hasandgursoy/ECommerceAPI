@@ -13,6 +13,9 @@ using ECommerceAPI.Persistance.Repositories.File;
 using ECommerceAPI.Persistance.Repositories.ProductImageFile;
 using ECommerceAPI.Persistance.Repositories.InvoiceFile;
 using ECommerceAPI.Domain.Entities.Identity;
+using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Persistance.Services;
+using ECommerceAPI.Application.Abstractions.Services.Authentications;
 
 namespace ECommerceAPI.Persistance
 {
@@ -54,7 +57,10 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IInvoiceFileReadRepository, InvoiceReadRepository>();
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceWriteRepository>();
 
-
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IInternalAuthentication, AuthService>();
 
 
         }

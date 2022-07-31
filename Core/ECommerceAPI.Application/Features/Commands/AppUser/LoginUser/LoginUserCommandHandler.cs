@@ -1,4 +1,5 @@
-﻿using ECommerceAPI.Application.Abstractions.Token;
+﻿using ECommerceAPI.Application.Abstractions.Services.Authentications;
+using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
 using ECommerceAPI.Application.Excepitons;
 using MediatR;
@@ -14,54 +15,21 @@ namespace ECommerceAPI.Application.Features.Commands.AppUser.LoginUser
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, LoginUserCommandResponse>
     {
         // SignInManager kullanıcının giriş yapabilmesi yardım eden service.
-        readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
-        readonly SignInManager<Domain.Entities.Identity.AppUser> _signInManager;
-        readonly ITokenHandler _tokenHandler;
+        readonly IInternalAuthentication _authService;
 
-
-
-        public LoginUserCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager,
-            SignInManager<Domain.Entities.Identity.AppUser> signInManager,
-            ITokenHandler tokenHandler)
+        public LoginUserCommandHandler(IInternalAuthentication authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenHandler = tokenHandler;
+            _authService = authService;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
         {
-            Domain.Entities.Identity.AppUser user = await _userManager.FindByNameAsync(request.UsernameOrEmail);
-            // Eğer yukarıdakinde username null gelirse mail'e bakacağız.
-            if (user == null)
+
+            var token = await _authService.LoginAsync(request.UsernameOrEmail,request.Password,15);
+            return new LoginUserSuccessCommandResponse()
             {
-                user = await _userManager.FindByEmailAsync(request.UsernameOrEmail);
-            }
-
-            if (user == null)
-            {
-                throw new NotFoundUserExcepiton();
-            }
-
-            // CheckPasswordSignInAsync 'in lockPassInFailure parametresini true yaparsak
-            // 3 den fazla yanlış girişti hesap 15 dk kitlensin diyebiliyoruz yada başka senaryolar.
-            SignInResult result = await _signInManager.CheckPasswordSignInAsync(user,request.Password,false);
-
-            // Artık Giriş Başarılıysa Yetkilendirme(Authorization) işlemine geçelim.
-            if (result.Succeeded) // Authentication başarılı :D 
-            {
-                Token token = _tokenHandler.CreateAccessToken(5);
-
-                return new LoginUserSuccessCommandResponse()
-                {
-                    Token = token,
-                };
-               
-            }
-
-            throw new AuthenticationErrorExcepiton();
-
-            
+                Token = token
+            };
            
         }
     }
