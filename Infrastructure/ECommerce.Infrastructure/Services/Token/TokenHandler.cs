@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,15 +38,27 @@ namespace ECommerceAPI.Infrastructure.Services.Token
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow, // Ne zaman devereye gireceğini söyler biz hemen devreye girmesini istiyoruz.
                 signingCredentials: signingCredentials
-                
+
                 );
 
             // Token oluşturucu sınıfından bir örnek alalım.
             JwtSecurityTokenHandler tokenHandler = new();
             token.AccessToken = tokenHandler.WriteToken(securityToken);
-
+            token.RefreshToken = CreateRefreshToken();
+            
             return token; // bu aşamadan sonra LoginUserCommandHandler'a geri dönüyoruz.
 
+
+
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
+            random.GetBytes(number);
+
+            return Convert.ToBase64String(number);
         }
     }
 }

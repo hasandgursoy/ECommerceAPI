@@ -1,6 +1,7 @@
 ﻿using ECommerceAPI.Application.Features.Commands.AppUser.FaceBookLogin;
 using ECommerceAPI.Application.Features.Commands.AppUser.GoogleLogin;
 using ECommerceAPI.Application.Features.Commands.AppUser.LoginUser;
+using ECommerceAPI.Application.Features.Commands.AppUser.RefreshTokenLogin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,14 @@ namespace ECommerceAPI.API.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> RefreshToken([FromQuery]RefreshTokenCommandRequest request)
+        {
+            RefreshTokenCommandResponse response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
 
         [HttpPost("google-login")]
 

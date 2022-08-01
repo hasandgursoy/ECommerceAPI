@@ -10,6 +10,6 @@ namespace ECommerceAPI.Application.Abstractions.Token
     {
         // Uretilen jwt tokenın adı CreateAccesToken 
         DTOs.Token CreateAccessToken(int second);
-
+        string CreateRefreshToken();
     }
 }

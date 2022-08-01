@@ -1,5 +1,6 @@
 ﻿using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Application.DTOs.User;
+using ECommerceAPI.Application.Excepitons;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -24,7 +25,7 @@ namespace ECommerceAPI.Persistance.Services
 
         public async Task<CreateUserResponseDto> CreateAsync(CreateUserDto model)
         {
-            
+
 
             IdentityResult result = await _userManager.CreateAsync(new()
             {
@@ -54,6 +55,20 @@ namespace ECommerceAPI.Persistance.Services
             }
 
             return response;
+        }
+
+        public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnAccessTokenLifeTime)
+        {
+            if (user != null)
+            {
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenEndDate = accessTokenDate.AddSeconds(addOnAccessTokenLifeTime);
+                await _userManager.UpdateAsync(user);
+
+            }
+            else
+                throw new NotFoundUserExcepiton();
+
         }
     }
 }

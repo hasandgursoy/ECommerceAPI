@@ -6,6 +6,7 @@ using ECommerceAPI.Application.Excepitons;
 using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -22,17 +23,18 @@ namespace ECommerceAPI.Persistance.Services
         readonly IConfiguration _configuration;
         readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
         readonly ITokenHandler _tokenHandler;
-        readonly SignInManager<Domain.Entities.Identity.AppUser> _signInManager ;
-
-        public AuthService(IHttpClientFactory httpClientFactory, IConfiguration configuration, UserManager<Domain.Entities.Identity.AppUser> userManager, ITokenHandler tokenHandler)
+        readonly SignInManager<Domain.Entities.Identity.AppUser> _signInManager;
+        readonly IUserService _userService;
+        public AuthService(IHttpClientFactory httpClientFactory, IConfiguration configuration, UserManager<Domain.Entities.Identity.AppUser> userManager, ITokenHandler tokenHandler, IUserService userService)
         {
             httpClientFactory.CreateClient();
             _configuration = configuration;
             _userManager = userManager;
             _tokenHandler = tokenHandler;
+            _userService = userService;
         }
 
-        async Task<Token> CreateUserExternalAsync(AppUser user, string email, string name, UserLoginInfo info, int accessTokenLifeTime) 
+        async Task<Token> CreateUserExternalAsync(AppUser user, string email, string name, UserLoginInfo info, int accessTokenLifeTime)
         {
             bool result = user != null;
 
@@ -45,7 +47,7 @@ namespace ECommerceAPI.Persistance.Services
                     {
                         Id = Guid.NewGuid().ToString(),
                         Email = email,
-                        UserName =email,
+                        UserName = email,
                         NameSurname = name
                     };
 
@@ -58,6 +60,7 @@ namespace ECommerceAPI.Persistance.Services
             {
                 await _userManager.AddLoginAsync(user, info); // AspNetUserLogins
                 Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
                 return token;
             }
             throw new Exception("Invalid External Authentication.");
@@ -84,7 +87,7 @@ namespace ECommerceAPI.Persistance.Services
                 var info = new UserLoginInfo("FACEBOOK", validation.Data.UserId, "FACEBOOK");
                 Domain.Entities.Identity.AppUser user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
-                await CreateUserExternalAsync(user,facebookUserInfo.Email,facebookUserInfo.Name,info,accessTokenLifeTime);
+                await CreateUserExternalAsync(user, facebookUserInfo.Email, facebookUserInfo.Name, info, accessTokenLifeTime);
 
             }
             throw new Exception("Invalid External Authentication.");
@@ -104,7 +107,7 @@ namespace ECommerceAPI.Persistance.Services
             var info = new UserLoginInfo("GOOGLE", payload.Subject, "GOOGLE");
             Domain.Entities.Identity.AppUser user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
-            return  await CreateUserExternalAsync(user,payload.Email,payload.Name,info,accessTokenLifeTime);
+            return await CreateUserExternalAsync(user, payload.Email, payload.Name, info, accessTokenLifeTime);
 
         }
 
@@ -124,7 +127,7 @@ namespace ECommerceAPI.Persistance.Services
 
             // CheckPasswordSignInAsync 'in lockPassInFailure parametresini true yaparsak
             // 3 den fazla yanlış girişti hesap 15 dk kitlensin diyebiliyoruz yada başka senaryolar.
-            SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, password,false );
+            SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
 
             // Artık Giriş Başarılıysa Yetkilendirme(Authorization) işlemine geçelim.
             if (result.Succeeded) // Authentication başarılı :D 
@@ -136,6 +139,21 @@ namespace ECommerceAPI.Persistance.Services
             }
 
             throw new AuthenticationErrorExcepiton();
+        }
+
+        public async Task<Token> RefreshTokenLoginAsync(string refreshToken)
+        {
+
+            AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+            {
+
+                Token token = _tokenHandler.CreateAccessToken(15);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 15);
+                return token;
+            }
+            else
+                throw new NotFoundUserExcepiton();
         }
     }
 }
