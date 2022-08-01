@@ -26,34 +26,7 @@ namespace ECommerceAPI.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("[action]")]
-
-        public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
-        {
-            LoginUserCommandResponse response = await _meditaor.Send(loginUserCommandRequest);
-
-            return Ok(response);
-        }
-
-        [HttpPost("google-login")]
-
-        public async Task<IActionResult> GoogleLogin(GoogleLoginCommandRequest googleLoginCommandRequest)
-        {
-
-            GoogleLoginCommandResponse response = await _meditaor.Send(googleLoginCommandRequest);
-            return Ok(response);
-
-        }
-
-        [HttpPost("facebook-login")]
-
-        public async Task<IActionResult> FaceBooklogin(FacebookLoginCommandRequest facebookLoginCommandRequest)
-        {
-
-            FacebookLoginCommandResponse response = await _meditaor.Send(facebookLoginCommandRequest);
-            return Ok(response);
-
-        }
+        
 
 
     }
